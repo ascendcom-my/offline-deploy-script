@@ -274,6 +274,8 @@ if not defined CHROME_PATH (
         echo :: This script launches the application in Kiosk mode after a delay.
         echo echo Waiting 10 seconds for services ^(Herd, DBngin^) to initialize...
         echo timeout /t 10
+        echo echo Terminating Windows Explorer...
+        echo taskkill /f /im explorer.exe
         echo echo Launching application: !PROJECT_URL!
         echo start "" "!CHROME_PATH!" --kiosk --disable-pinch "!PROJECT_URL!"
     ) > "!STARTUP_SCRIPT_PATH!"
