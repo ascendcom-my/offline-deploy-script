@@ -102,29 +102,22 @@ pause
 
 :: --- 3. SSH Key Generation & Upload ---
 echo [STEP 3/8] Handling SSH Key...
-$keyPath = Join-Path $env:USERPROFILE ".ssh\id_rsa"
-$pubPath = "$keyPath.pub"
-$sshDir  = Split-Path $keyPath
 
-if (-not (Test-Path $pubPath)) {
-    Write-Host "  - No existing SSH key found. Generating a new one..."
-    if (-not (Test-Path $sshDir)) {
-        New-Item -ItemType Directory -Path $sshDir -Force | Out-Null
-    }
+set "SSH_DIR=%USERPROFILE%\.ssh"
+set "KEY_PATH=%SSH_DIR%\id_rsa"
+set "PUB_KEY_PATH=%KEY_PATH%.pub"
 
-    # Use Windows OpenSSH ssh-keygen explicitly for reliability
-    $sshKeygen = Join-Path $env:SystemRoot "System32\OpenSSH\ssh-keygen.exe"
-    if (-not (Test-Path $sshKeygen)) { $sshKeygen = "ssh-keygen" }
+if not exist "%SSH_DIR%" mkdir "%SSH_DIR%"
+if not exist "%PUB_KEY_PATH%" (
+    echo    - No existing SSH key found. Generating a new one...
+    ssh-keygen -t rsa -b 4096 -N "" -f "%KEY_PATH%"
+    echo    - SSH key generated.
+) else (
+    echo    - Existing SSH key found.
+)
 
-    & $sshKeygen -t rsa -b 4096 -N "" -f $keyPath -C "generated-$(whoami)@$(hostname)"
-    if ($LASTEXITCODE -ne 0) { throw "ssh-keygen failed with exit code $LASTEXITCODE" }
-
-    Write-Host "  - SSH key generated."
-} else {
-    Write-Host "  - Existing SSH key found."
-}
-
-type $pubPath
+echo Your Public SSH Key:
+type "%PUB_KEY_PATH%"
 
 
 # echo    - Uploading public key to the server...
@@ -315,4 +308,5 @@ if not defined CHROME_PATH (
 )
 echo.
 endlocal
+
 
