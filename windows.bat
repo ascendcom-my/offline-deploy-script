@@ -21,8 +21,8 @@ if %errorLevel% NEQ 0 (
     echo.
     echo [ACTION REQUIRED] Requesting administrative privileges to run installers...
     echo Please click "Yes" on the UAC prompt.
-    powershell -Command "Start-Process cmd.exe -ArgumentList '/c %~s0 %*' -Verb RunAs"
-    exit
+    powershell -Command "Start-Process '%~0' -ArgumentList '%*' -Verb runAs" -Wait
+    exit /b
 )
 echo [SUCCESS] Running with administrative privileges.
 echo.
@@ -308,6 +308,7 @@ if not defined CHROME_PATH (
 )
 echo.
 endlocal
+
 
 
 
