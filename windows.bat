@@ -120,12 +120,12 @@ echo Your Public SSH Key:
 type "%PUB_KEY_PATH%"
 
 
-# echo    - Uploading public key to the server...
-# set /p PUBLIC_KEY=<"%USERPROFILE%\.ssh\id_rsa.pub"
-# echo    - Sending key: !PUBLIC_KEY!
+:: echo    - Uploading public key to the server...
+:: set /p PUBLIC_KEY=<"%USERPROFILE%\.ssh\id_rsa.pub"
+:: echo    - Sending key: !PUBLIC_KEY!
 
-# :: Using curl to send the key as a JSON payload
-# curl -X POST -H "Content-Type: application/json" -d "{\"key\":\"!PUBLIC_KEY!\"}" "%PUBLIC_KEY_API_ENDPOINT%"
+:: Using curl to send the key as a JSON payload
+:: curl -X POST -H "Content-Type: application/json" -d "{\"key\":\"!PUBLIC_KEY!\"}" "%PUBLIC_KEY_API_ENDPOINT%"
 
 
 
@@ -308,5 +308,6 @@ if not defined CHROME_PATH (
 )
 echo.
 endlocal
+
 
 
