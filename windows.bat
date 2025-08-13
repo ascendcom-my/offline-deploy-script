@@ -140,6 +140,16 @@ echo.
 
 :: --- 4. Clone Project ---
 echo [STEP 4/8] Cloning project from Git repository...
+
+set "GIT_PATH=C:\Program Files\Git\cmd"
+set PATH=%GIT_PATH%;%PATH%
+
+echo Using Git from %GIT_PATH%
+git --version
+
+echo no Strict Host Key Checking
+set "GIT_SSH_COMMAND=ssh -o StrictHostKeyChecking=no"
+
 if not exist "%HERD_PROJECTS_DIR%" mkdir "%HERD_PROJECTS_DIR%"
 cd /d "%HERD_PROJECTS_DIR%"
 for %%i in ("%REPO_URL%") do set "PROJECT_DIR_NAME=%%~ni"
@@ -308,6 +318,7 @@ if not defined CHROME_PATH (
 )
 echo.
 endlocal
+
 
 
 
