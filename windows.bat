@@ -102,20 +102,39 @@ pause
 
 :: --- 3. SSH Key Generation & Upload ---
 echo [STEP 3/8] Handling SSH Key...
-if not exist "%USERPROFILE%\.ssh\id_rsa.pub" (
-    echo    - No existing SSH key found. Generating a new one...
-    ssh-keygen -t rsa -b 4096 -N "" -f "%USERPROFILE%\.ssh\id_rsa"
-    echo    - SSH key generated.
-) else (
-    echo    - Existing SSH key found.
-)
+$keyPath = Join-Path $env:USERPROFILE ".ssh\id_rsa"
+$pubPath = "$keyPath.pub"
+$sshDir  = Split-Path $keyPath
 
-echo    - Uploading public key to the server...
-set /p PUBLIC_KEY=<"%USERPROFILE%\.ssh\id_rsa.pub"
-echo    - Sending key: !PUBLIC_KEY!
+if (-not (Test-Path $pubPath)) {
+    Write-Host "  - No existing SSH key found. Generating a new one..."
+    if (-not (Test-Path $sshDir)) {
+        New-Item -ItemType Directory -Path $sshDir -Force | Out-Null
+    }
 
-:: Using curl to send the key as a JSON payload
-curl -X POST -H "Content-Type: application/json" -d "{\"key\":\"!PUBLIC_KEY!\"}" "%PUBLIC_KEY_API_ENDPOINT%"
+    # Use Windows OpenSSH ssh-keygen explicitly for reliability
+    $sshKeygen = Join-Path $env:SystemRoot "System32\OpenSSH\ssh-keygen.exe"
+    if (-not (Test-Path $sshKeygen)) { $sshKeygen = "ssh-keygen" }
+
+    & $sshKeygen -t rsa -b 4096 -N "" -f $keyPath -C "generated-$(whoami)@$(hostname)"
+    if ($LASTEXITCODE -ne 0) { throw "ssh-keygen failed with exit code $LASTEXITCODE" }
+
+    Write-Host "  - SSH key generated."
+} else {
+    Write-Host "  - Existing SSH key found."
+}
+
+type $pubPath
+
+
+# echo    - Uploading public key to the server...
+# set /p PUBLIC_KEY=<"%USERPROFILE%\.ssh\id_rsa.pub"
+# echo    - Sending key: !PUBLIC_KEY!
+
+# :: Using curl to send the key as a JSON payload
+# curl -X POST -H "Content-Type: application/json" -d "{\"key\":\"!PUBLIC_KEY!\"}" "%PUBLIC_KEY_API_ENDPOINT%"
+
+
 
 echo.
 echo [ACTION REQUIRED]
@@ -296,3 +315,4 @@ if not defined CHROME_PATH (
 )
 echo.
 endlocal
+
