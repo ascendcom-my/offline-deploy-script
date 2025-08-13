@@ -1,2 +1,2 @@
 # For window installation
-`Invoke-WebRequest -Uri "https://raw.githubusercontent.com/ascendcom-my/offline-deploy-script/master/windows.bat" -OutFile "windows.bat"; & ".\windows.bat"`
+`Invoke-WebRequest -Uri "https://raw.githubusercontent.com/ascendcom-my/offline-deploy-script/master/windows.bat" -OutFile "windows.bat"; & ".\windows.bat" "git@github.com:ascendcom-my/project.git"`
